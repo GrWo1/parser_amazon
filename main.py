@@ -236,7 +236,6 @@ def get_book():
                     save_book(title, image, text, price, id_category_book, url_buy)
 
         print(f'{file} - done!')
-        break
 
 
 def books_category(category_key, category_value):

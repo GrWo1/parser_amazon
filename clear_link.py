@@ -9,6 +9,7 @@ for file in os.listdir('1_full_books_url'):
         new_urls = []
         for url in urls:
             url = url.replace("https://www.amazon.com/", "https://www.amazon.de/")
+            url = url.replace("-/en/", "")
             if url.find("/dp/") == -1:
                 continue
             elif url.count("https://www.amazon.de") == 2:

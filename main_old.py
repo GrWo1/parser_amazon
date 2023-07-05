@@ -4,8 +4,7 @@ import pymysql
 from datetime import datetime, timedelta
 import csv
 import os
-import json
-import sys
+import re
 
 from bs4 import BeautifulSoup
 from category import id_category, id_category_amazon
@@ -35,8 +34,9 @@ cookies = {
     'i18n-prefs': 'EUR',
     'ubid-acbde': '257-1558258-5223425',
     'sp-cdn': '"L5Z9:RU"',
-    'session-token': '"b1bJDTKb2s6HGp6jvuKh7MdAd+vopadTf66/1oe4BvkZbndzwyJxkmWUAtijL0Dh/mdE6HGv6Gx3EF2MyLtXZkYJCaBOVqhW2SaJKfw60w6WG2xJx6aOrI7KHnQVAdu4yDiwQLMjWsgAyMiQbsgDb0+j5i2/5WN+2sOBeQdyzf7qHjAIj2ewirV8TJpPgb2nS31qp2sEYBsrRSXOYGn2xQ1/wi0Pk5REJ0on8I3DH44="',
-    'csm-hit': 'tb:C0DZGZX3RQ174YJBGAJ6+s-BWJ34TVZ15TRGF3MP5AS|1688549429947&t:1688549429947&adb:adblk_yes',
+    'lc-acbde': 'en_GB',
+    'session-token': '"oamMoB32Gdv0rOpl3msv7zBDjXXgeOzM3oqaOFsniCFcvEWJbqaxrPhKthyj9TAjRXusLdAUMfau3e2NjbZRW/KImRUnJpv2oX21+MePSFYNBmIu9R39XEPUZgSbLeuorTskS3VWBgwkTDjVhg0LF5kTQC+fZUNucl5IKUTO/+otuEOkCwFpF3JeOsugUsc0uLb9kqd7TNUjxrfwMacGhIWvDJC1MOsOiJMt3LhzmgM="',
+    'csm-hit': 'tb:s-HPY5XPMKCSW206617JAG|1688558920011&t:1688558921349&adb:adblk_yes',
 }
 
 headers = {
@@ -44,14 +44,13 @@ headers = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'accept-language': 'ru,en-US;q=0.9,en;q=0.8,de;q=0.7,zh;q=0.6,zh-TW;q=0.5,zh-CN;q=0.4',
     'cache-control': 'max-age=0',
-    # 'cookie': 'session-id=262-9244124-2095467; session-id-time=2082787201l; i18n-prefs=EUR; ubid-acbde=257-1558258-5223425; sp-cdn="L5Z9:RU"; session-token="b1bJDTKb2s6HGp6jvuKh7MdAd+vopadTf66/1oe4BvkZbndzwyJxkmWUAtijL0Dh/mdE6HGv6Gx3EF2MyLtXZkYJCaBOVqhW2SaJKfw60w6WG2xJx6aOrI7KHnQVAdu4yDiwQLMjWsgAyMiQbsgDb0+j5i2/5WN+2sOBeQdyzf7qHjAIj2ewirV8TJpPgb2nS31qp2sEYBsrRSXOYGn2xQ1/wi0Pk5REJ0on8I3DH44="; csm-hit=tb:C0DZGZX3RQ174YJBGAJ6+s-BWJ34TVZ15TRGF3MP5AS|1688549429947&t:1688549429947&adb:adblk_yes',
+    # 'cookie': 'session-id=262-9244124-2095467; session-id-time=2082787201l; i18n-prefs=EUR; ubid-acbde=257-1558258-5223425; sp-cdn="L5Z9:RU"; lc-acbde=en_GB; session-token="oamMoB32Gdv0rOpl3msv7zBDjXXgeOzM3oqaOFsniCFcvEWJbqaxrPhKthyj9TAjRXusLdAUMfau3e2NjbZRW/KImRUnJpv2oX21+MePSFYNBmIu9R39XEPUZgSbLeuorTskS3VWBgwkTDjVhg0LF5kTQC+fZUNucl5IKUTO/+otuEOkCwFpF3JeOsugUsc0uLb9kqd7TNUjxrfwMacGhIWvDJC1MOsOiJMt3LhzmgM="; csm-hit=tb:s-HPY5XPMKCSW206617JAG|1688558920011&t:1688558921349&adb:adblk_yes',
     'device-memory': '8',
     'dnt': '1',
-    'downlink': '10',
+    'downlink': '1.05',
     'dpr': '2',
     'ect': '4g',
-    'referer': 'https://www.amazon.de/s?i=stripbooks&rh=n%3A186606&dc&fs=true&ds=v1%3A5mGI1FtXF32BgHMErA5ZBeNXt%2BaiZHJQVEjTpQCBFXQ&qid=1688549204&ref=sr_ex_n_1',
-    'rtt': '50',
+    'rtt': '150',
     'sec-ch-device-memory': '8',
     'sec-ch-dpr': '2',
     'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
@@ -66,6 +65,12 @@ headers = {
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
     'viewport-width': '663',
+}
+
+params = {
+    'qid': '1688553221',
+    's': 'books',
+    'sr': '1-2',
 }
 
 
@@ -150,32 +155,44 @@ def save_book(title, image, text, price, id_category_book, url_buy):
 def get_book():
     for file in os.listdir('books_url'):
         name_category = file[:file.find("_")]
-        id_amazon = [k for k, v in id_category_amazon.items() if v == name_category]
-        id_amazon = id_amazon[0]
-        id_category_book = [k for k, v in id_category.items() if v == id_amazon]
-        id_category_book = id_category_book[0]
+        id_category_book = [k for k, v in id_category.items() if v == name_category][0]
         path = os.path.join('books_url', file)
+        name_csv = f"{name_category}.csv"
+        path_data = os.path.join('DATA', name_csv)
+        fields_to_save = [
+            "date",
+            "short_story",
+            "full_story",
+            "title",
+            "category",
+            "alt_name",
+        ]
+        with open(path_data, 'w', ) as file_csv:
+            writer = csv.DictWriter(file_csv, fieldnames=fields_to_save)
+            writer.writeheader()
+
         with open(path, 'r') as urls:
             urls = urls.readlines()
             k = 1
             for url in urls:
-                if url.find("amazon.com/b?ref=") != -1:
-                    continue
                 url = url.rstrip('\n')
                 id_link = url[url.find("dp/")+3:]
                 id_link = id_link[:id_link.find("/")]
-                url_buy = f"https://www.amazon.com/dp/{id_link}?&tag=ebooks0d4-20"
+                url_buy = f"https://www.amazon.de/dp/{id_link}?&tag=buch0ed-21"
                 while True:
                     try:
                         response = requests.get(
                             url,
                             headers=headers,
-                            proxies=proxies,
-                            # cookies=cookies,
+                            # proxies=proxies,
+                            cookies=cookies,
                             params=params,
                         ).text
+                        print(response)
+                        time.sleep(1000)
                         soup = BeautifulSoup(response, 'html.parser')
                         title = soup.find("span", id="productTitle").text
+                        title = title.strip()
                         try:
                             image = soup.find("div", class_="image-wrapper").find("img")["src"]
                         except AttributeError:
@@ -187,11 +204,14 @@ def get_book():
                                 except AttributeError:
                                     image = soup.find("ul", class_="maintain-height").find_all("li")[0]
                                     image = image.find("img")["src"]
+                        image_link = f'<p> <center><a href="{url_buy}" target="_blank"><img src="{image}" "></a> </center></p>'
                         try:
                             price = soup.find("div", id="tmmSwatches").find_all("span", class_="a-button-inner")
                             price = price[0].text.replace("\n", "")  # взял первую цену из списка
+                            price = price[price.find("€"):].strip()
                         except AttributeError:
-                            price = "$0.00"
+                            price = "€0.00"
+                        price = f'<p><br></p> <p>Preis: {price}</p>'
                         p_text = soup.find("div", class_="a-expander-content")
                         details = []
                         try:
@@ -205,7 +225,27 @@ def get_book():
                         for p in p_text:
                             text += p.text
                         text += '<p><strong>' + '<br>'.join(details) + '</strong></p>'
-                        save_book(title, image, text, price, id_category_book, url_buy)
+
+                        url_buy = f'<p> <center><a href="{url_buy}" target="_blank">{title}</a></center> </p>'
+                        short_story = f'{image_link}{price}{text[:201]}...'
+                        full_story = f'{image_link}{price}{text}{url_buy}'
+                        date_now = datetime.now() - timedelta(days=1)
+                        reg = re.compile('[^a-zA-Z0-9 ]')
+                        alt_name = reg.sub('', title).lower().replace(" ", "-")
+                        alt_name = alt_name[:189]
+                        alt_name = alt_name[:alt_name.rfind(" ")]
+                        data_to_save = [
+                            date_now,
+                            short_story,
+                            full_story,
+                            title,
+                            id_category_book,
+                            alt_name,
+                        ]
+                        with open(path_data, 'a', newline="") as file_csv:
+                            writer = csv.writer(file_csv)
+                            writer.writerow(data_to_save)
+                        time.sleep(1000)
                         print(k)
                         k += 1
                     except AttributeError as e:
@@ -213,7 +253,7 @@ def get_book():
                         time.sleep(15)
                         continue
                     except Exception as e:
-                        requests.get("https://proxy.onedash.net/f1f8803370f027f6c51bb8f253757253/45a491")
+                        # requests.get("https://proxy.onedash.net/f1f8803370f027f6c51bb8f253757253/45a491")
                         print(e, "Wait 20 sec...reconnect")
                         time.sleep(20)
                     else:
@@ -222,7 +262,6 @@ def get_book():
 
 
 def books_category(category_key, category_value):
-    p = 1
     for page in range(1, 76):
         time.sleep(3)
         url_page = f"https://www.amazon.de/s?i=stripbooks&rh=n%3A{category_key}&fs=true&page={page}"
@@ -236,7 +275,6 @@ def books_category(category_key, category_value):
         soup = BeautifulSoup(response_page, 'html.parser')
         books = soup.find_all('div', class_='aok-relative')
         links_to_books = set()
-        k = 1
         for book in books:
             try:
                 href_book = book.find('a', class_='a-link-normal').get("href")
@@ -246,7 +284,6 @@ def books_category(category_key, category_value):
         data = '\n'.join(str(element) for element in links_to_books)
         with open(f'{category_value}_links_books.txt', 'a', encoding='utf-8') as file:
             file.write(data)
-        p += 1
     print(f'{category_value}.........done!')
     time.sleep(1000)
 
@@ -288,31 +325,30 @@ def books_category_selenium(category_key, category_value):
 
     for page in range(1, 76):
         driver.implicitly_wait(0)
-        driver.get(f"https://www.amazon.com/s?i=stripbooks&rh=n%3A{category_key}&fs=true&page={page}")
+        driver.get(f"https://www.amazon.de/s?i=stripbooks&rh=n%3A{category_key}&fs=true&page={page}")
         html = driver.page_source
         soup = BeautifulSoup(html, 'html.parser')
-        books = soup.find_all('div', class_='sg-row')
+        books = soup.find_all('div', class_='aok-relative')
         links_to_books = set()
         for book in books:
             try:
                 href_book = book.find('a', class_='a-link-normal').get("href")
-                if str(href_book).find('/help/customer') == -1 and str(href_book).find('/books-category/') == -1:
-                    links_to_books.add("https://www.amazon.com" + href_book)
+                links_to_books.add("https://www.amazon.de" + href_book)
             except AttributeError:
-                print(0)
-        time.sleep(0.5)
+                continue
         data = '\n'.join(str(element) for element in links_to_books)
         with open(f'{category_value}_links_books.txt', 'a', encoding='utf-8') as file:
             file.write(data)
+    print(f'{category_value}.........done!')
 
 
 def get_id_category():
     for key, value in id_category_amazon.items():
-        books_category(key, value)
+        books_category_selenium(key, value)
 
 
 def mani():
-    get_id_category()
+    get_book()
 
 
 if __name__ == '__main__':
