@@ -1,8 +1,8 @@
 import os
 import time
 
-for file in os.listdir('1_full_books_url'):
-    path = os.path.join('1_full_books_url', file)
+for file in os.listdir('books_url'):
+    path = os.path.join('books_url', file)
     if file == '.DS_Store':
         continue
     with open(path, 'r', encoding='utf-8') as urls:

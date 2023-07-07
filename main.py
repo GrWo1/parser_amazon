@@ -309,7 +309,6 @@ def books_category_selenium(category_key, category_value):
     )
     for page in range(1, 76):
         driver.get(f"https://www.amazon.de/s?i=stripbooks&rh=n%3A{category_key}&fs=true&page={page}")
-        time.sleep(15)
         html = driver.page_source
         print(html)
         soup = BeautifulSoup(html, 'html.parser')
@@ -319,10 +318,10 @@ def books_category_selenium(category_key, category_value):
             # driver.implicitly_wait(5)
             try:
                 href_book = book.find('a', class_='a-link-normal').get("href")
-                if str(href_book).find('/help/customer') == -1 and str(href_book).find('/books-category/') == -1:
+                if str(href_book).find('/dp/') != -1:
                     links_to_books.add("https://www.amazon.de" + href_book)
             except AttributeError as e:
-                print(f"{href_book} - {e}")
+                print(f"{page} - {e}")
         time.sleep(0.2)
         data = '\n'.join(str(element) for element in links_to_books)
         with open(f'{category_value}_links_books.txt', 'a', encoding='utf-8') as file:

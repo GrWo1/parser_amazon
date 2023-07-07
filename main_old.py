@@ -35,8 +35,8 @@ cookies = {
     'ubid-acbde': '257-1558258-5223425',
     'sp-cdn': '"L5Z9:RU"',
     'lc-acbde': 'en_GB',
-    'session-token': '"oamMoB32Gdv0rOpl3msv7zBDjXXgeOzM3oqaOFsniCFcvEWJbqaxrPhKthyj9TAjRXusLdAUMfau3e2NjbZRW/KImRUnJpv2oX21+MePSFYNBmIu9R39XEPUZgSbLeuorTskS3VWBgwkTDjVhg0LF5kTQC+fZUNucl5IKUTO/+otuEOkCwFpF3JeOsugUsc0uLb9kqd7TNUjxrfwMacGhIWvDJC1MOsOiJMt3LhzmgM="',
-    'csm-hit': 'tb:s-HPY5XPMKCSW206617JAG|1688558920011&t:1688558921349&adb:adblk_yes',
+    'session-token': '"IJ97IAFLJ0Xd3R9KtAdSaDm+wRwzucSATP+KuANtBqc9Jw/YN/ApH2sktoN5qxIwpb/IisuDMxV5ZPNFgaJLKMK99bVpaFcwqa3HjTrXUDVXE6FEcOwbYPe+BnNMgPAhrcQSnSPVLo1p79t6Qjx4j3VKrLcGjmm/cEJJMScTQd3isXOyzSC5y24C0J32J4BTh1MRtMOk4s1wa73vTM1Qn6imCiw30IpUmHD/833xYgs="',
+    'csm-hit': 'tb:s-6P9RA4VMK7AJZQ5ZT1BS|1688665276133&t:1688665277098&adb:adblk_yes',
 }
 
 headers = {
@@ -44,33 +44,33 @@ headers = {
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'accept-language': 'ru,en-US;q=0.9,en;q=0.8,de;q=0.7,zh;q=0.6,zh-TW;q=0.5,zh-CN;q=0.4',
     'cache-control': 'max-age=0',
-    # 'cookie': 'session-id=262-9244124-2095467; session-id-time=2082787201l; i18n-prefs=EUR; ubid-acbde=257-1558258-5223425; sp-cdn="L5Z9:RU"; lc-acbde=en_GB; session-token="oamMoB32Gdv0rOpl3msv7zBDjXXgeOzM3oqaOFsniCFcvEWJbqaxrPhKthyj9TAjRXusLdAUMfau3e2NjbZRW/KImRUnJpv2oX21+MePSFYNBmIu9R39XEPUZgSbLeuorTskS3VWBgwkTDjVhg0LF5kTQC+fZUNucl5IKUTO/+otuEOkCwFpF3JeOsugUsc0uLb9kqd7TNUjxrfwMacGhIWvDJC1MOsOiJMt3LhzmgM="; csm-hit=tb:s-HPY5XPMKCSW206617JAG|1688558920011&t:1688558921349&adb:adblk_yes',
+    # 'cookie': 'session-id=262-9244124-2095467; session-id-time=2082787201l; i18n-prefs=EUR; ubid-acbde=257-1558258-5223425; sp-cdn="L5Z9:RU"; lc-acbde=en_GB; session-token="IJ97IAFLJ0Xd3R9KtAdSaDm+wRwzucSATP+KuANtBqc9Jw/YN/ApH2sktoN5qxIwpb/IisuDMxV5ZPNFgaJLKMK99bVpaFcwqa3HjTrXUDVXE6FEcOwbYPe+BnNMgPAhrcQSnSPVLo1p79t6Qjx4j3VKrLcGjmm/cEJJMScTQd3isXOyzSC5y24C0J32J4BTh1MRtMOk4s1wa73vTM1Qn6imCiw30IpUmHD/833xYgs="; csm-hit=tb:s-6P9RA4VMK7AJZQ5ZT1BS|1688665276133&t:1688665277098&adb:adblk_yes',
     'device-memory': '8',
     'dnt': '1',
-    'downlink': '1.05',
-    'dpr': '2',
+    'downlink': '10',
+    'dpr': '1',
     'ect': '4g',
-    'rtt': '150',
+    'rtt': '50',
     'sec-ch-device-memory': '8',
-    'sec-ch-dpr': '2',
+    'sec-ch-dpr': '1',
     'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
     'sec-ch-ua-mobile': '?0',
     'sec-ch-ua-platform': '"macOS"',
     'sec-ch-ua-platform-version': '"12.5.0"',
-    'sec-ch-viewport-width': '663',
+    'sec-ch-viewport-width': '362',
     'sec-fetch-dest': 'document',
     'sec-fetch-mode': 'navigate',
     'sec-fetch-site': 'same-origin',
     'sec-fetch-user': '?1',
     'upgrade-insecure-requests': '1',
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-    'viewport-width': '663',
+    'viewport-width': '362',
 }
 
 params = {
-    'qid': '1688553221',
+    'qid': '1688547573',
     's': 'books',
-    'sr': '1-2',
+    'sr': '1-761',
 }
 
 
@@ -167,9 +167,9 @@ def get_book():
             "category",
             "alt_name",
         ]
-        with open(path_data, 'w', ) as file_csv:
-            writer = csv.DictWriter(file_csv, fieldnames=fields_to_save)
-            writer.writeheader()
+        # with open(path_data, 'w', ) as file_csv:
+        #     writer = csv.DictWriter(file_csv, fieldnames=fields_to_save)
+        #     writer.writeheader()
 
         with open(path, 'r') as urls:
             urls = urls.readlines()
@@ -184,12 +184,10 @@ def get_book():
                         response = requests.get(
                             url,
                             headers=headers,
-                            # proxies=proxies,
+                            proxies=proxies,
                             cookies=cookies,
                             params=params,
                         ).text
-                        print(response)
-                        time.sleep(1000)
                         soup = BeautifulSoup(response, 'html.parser')
                         title = soup.find("span", id="productTitle").text
                         title = title.strip()
@@ -245,7 +243,6 @@ def get_book():
                         with open(path_data, 'a', newline="") as file_csv:
                             writer = csv.writer(file_csv)
                             writer.writerow(data_to_save)
-                        time.sleep(1000)
                         print(k)
                         k += 1
                     except AttributeError as e:
@@ -285,7 +282,6 @@ def books_category(category_key, category_value):
         with open(f'{category_value}_links_books.txt', 'a', encoding='utf-8') as file:
             file.write(data)
     print(f'{category_value}.........done!')
-    time.sleep(1000)
 
 
 def books_category_selenium(category_key, category_value):
@@ -333,7 +329,8 @@ def books_category_selenium(category_key, category_value):
         for book in books:
             try:
                 href_book = book.find('a', class_='a-link-normal').get("href")
-                links_to_books.add("https://www.amazon.de" + href_book)
+                if str(href_book).find('/dp/') != -1:
+                    links_to_books.add("https://www.amazon.de" + href_book)
             except AttributeError:
                 continue
         data = '\n'.join(str(element) for element in links_to_books)
@@ -348,7 +345,7 @@ def get_id_category():
 
 
 def mani():
-    get_book()
+    get_id_category()
 
 
 if __name__ == '__main__':
