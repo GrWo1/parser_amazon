@@ -154,5 +154,6 @@ cython_debug/
 
 DATA/
 full_data/
-full_books_url/
+1_full_books_url/
 chromedriver
+full_data_400/

@@ -167,9 +167,9 @@ def get_book():
             "category",
             "alt_name",
         ]
-        # with open(path_data, 'w', ) as file_csv:
-        #     writer = csv.DictWriter(file_csv, fieldnames=fields_to_save)
-        #     writer.writeheader()
+        with open(path_data, 'w', ) as file_csv:
+            writer = csv.DictWriter(file_csv, fieldnames=fields_to_save)
+            writer.writeheader()
 
         with open(path, 'r') as urls:
             urls = urls.readlines()
@@ -178,7 +178,7 @@ def get_book():
                 url = url.rstrip('\n')
                 id_link = url[url.find("dp/")+3:]
                 id_link = id_link[:id_link.find("/")]
-                url_buy = f"https://www.amazon.de/dp/{id_link}?&tag=buch0ed-21"
+                url_buy = f"https://www.amazon.com/dp/{id_link}?&tag=ebooks0d4-20"
                 while True:
                     try:
                         response = requests.get(
